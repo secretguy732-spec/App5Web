@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>App5Web — Website to Android APK</title>
+<meta name="description" content="Ubah website apapun jadi APK Android yang bisa diinstall. Gratis, real, tanpa coding.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#060710;--s1:#0c0d1e;--s2:#11122a;
+  --bd:#ffffff14;--bd2:#ffffff22;
+  --acc:#4f8ef7;--acc2:#a855f7;--grn:#22c55e;
+  --red:#f43f5e;--ylw:#f59e0b;
+  --txt:#eef0ff;--sub:#8892aa;--r:14px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden}
+
+/* grid bg */
+body::before{content:'';position:fixed;inset:0;
+  background-image:linear-gradient(rgba(79,142,247,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(79,142,247,.025) 1px,transparent 1px);
+  background-size:44px 44px;pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;top:-20%;right:-10%;width:50%;height:60%;
+  background:radial-gradient(ellipse,rgba(168,85,247,.07) 0%,transparent 70%);
+  pointer-events:none;z-index:0}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:200;height:58px;
+  background:rgba(6,7,16,.85);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;justify-content:space-between;padding:0 24px}
+.logo{font-size:1.2rem;font-weight:800;letter-spacing:-.03em}
+.logo b{color:var(--acc)}
+.live-pill{display:flex;align-items:center;gap:6px;
+  background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);
+  color:#4ade80;padding:5px 14px;border-radius:20px;
+  font-size:.7rem;font-family:'JetBrains Mono',monospace;letter-spacing:.06em}
+.live-pill::before{content:'';width:6px;height:6px;border-radius:50%;
+  background:#22c55e;animation:blink 1.8s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+/* HERO */
+.hero{position:relative;z-index:1;text-align:center;padding:68px 20px 52px}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;
+  border:1px solid var(--bd2);border-radius:30px;
+  padding:6px 16px;font-size:.72rem;font-family:'JetBrains Mono',monospace;
+  color:var(--sub);margin-bottom:22px}
+h1{font-size:clamp(2.2rem,5vw,4.2rem);font-weight:800;
+  line-height:1.08;letter-spacing:-.035em;margin-bottom:16px}
+.grad{background:linear-gradient(135deg,#60a5fa,#c084fc);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sub{font-size:1rem;color:var(--sub);max-width:500px;margin:0 auto 44px;line-height:1.75}
+.stats{display:flex;justify-content:center;gap:40px;flex-wrap:wrap}
+.stat .n{font-size:1.7rem;font-weight:800;color:var(--acc)}
+.stat .l{font-size:.7rem;color:var(--sub);font-family:'JetBrains Mono',monospace;margin-top:2px}
+
+/* CARD */
+.wrap{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:0 18px 80px}
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);
+  overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.55)}
+
+/* TABS */
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--bd)}
+.tab{padding:15px 8px;background:transparent;border:none;color:var(--sub);
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:.8rem;font-weight:600;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;
+  border-right:1px solid var(--bd);position:relative;transition:color .2s}
+.tab:last-child{border-right:none}
+.tab::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:var(--acc);transform:scaleX(0);transition:transform .25s}
+.tab.on{color:var(--txt)}.tab.on::after{transform:scaleX(1)}
+.tab.done{color:var(--grn)}.tab.done::after{background:var(--grn);transform:scaleX(1)}
+.tn{width:21px;height:21px;border-radius:50%;background:var(--bd2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.67rem;font-family:'JetBrains Mono',monospace;
+  transition:all .2s;flex-shrink:0}
+.tab.on .tn{background:var(--acc);color:#fff}
+.tab.done .tn{background:var(--grn);color:#fff}
+.tl{display:none}
+@media(min-width:480px){.tl{display:inline}}
+
+/* PANELS */
+.body{padding:26px}
+.panel{display:none}.panel.on{display:block}
+
+/* FORM ELEMENTS */
+.fl{font-size:.7rem;font-family:'JetBrains Mono',monospace;color:var(--sub);
+  letter-spacing:.06em;text-transform:uppercase;margin-bottom:7px;
+  display:flex;align-items:center;gap:5px}
+.fl .r{color:var(--acc)}
+.fg{margin-bottom:16px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+
+input[type=text],input[type=url],select,textarea{
+  width:100%;background:var(--s2);border:1px solid var(--bd2);
+  border-radius:10px;color:var(--txt);
+  font-family:'JetBrains Mono',monospace;font-size:.86rem;
+  padding:10px 13px;outline:none;transition:border-color .2s,box-shadow .2s}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--acc);box-shadow:0 0 0 3px rgba(79,142,247,.12)}
+select option{background:var(--s1)}
+textarea{resize:vertical;min-height:68px;line-height:1.55}
+
+.url-row{position:relative}
+.url-row input{padding-left:38px;padding-right:82px}
+.url-ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);
+  opacity:.45;font-size:.95rem;pointer-events:none}
+.test-btn{position:absolute;right:7px;top:50%;transform:translateY(-50%);
+  background:rgba(79,142,247,.12);border:1px solid rgba(79,142,247,.25);
+  color:var(--acc);font-family:'JetBrains Mono',monospace;font-size:.68rem;
+  padding:5px 11px;border-radius:6px;cursor:pointer;transition:all .15s}
+.test-btn:hover{background:rgba(79,142,247,.25)}
+.hint{font-size:.7rem;font-family:'JetBrains Mono',monospace;
+  color:var(--sub);margin-top:5px}
+
+/* INFO BOX */
+.info{background:rgba(79,142,247,.06);border:1px solid rgba(79,142,247,.18);
+  border-radius:10px;padding:11px 13px;
+  font-size:.77rem;color:rgba(150,185,255,.85);
+  font-family:'JetBrains Mono',monospace;line-height:1.65;margin-bottom:16px}
+
+/* DIVIDER */
+.div{border:none;border-top:1px solid var(--bd);margin:18px 0}
+.sec{font-size:.68rem;font-family:'JetBrains Mono',monospace;color:var(--sub);
+  letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;
+  display:flex;align-items:center;gap:8px}
+.sec::after{content:'';flex:1;height:1px;background:var(--bd)}
+
+/* ICON UPLOAD */
+.drop{border:2px dashed var(--bd2);border-radius:12px;padding:26px;
+  text-align:center;cursor:pointer;transition:all .2s;position:relative}
+.drop:hover{border-color:var(--acc);background:rgba(79,142,247,.03)}
+.drop input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.drop-ph{font-size:2rem;margin-bottom:8px}
+.drop-hint{font-size:.73rem;color:var(--sub);font-family:'JetBrains Mono',monospace}
+#iconPrev{width:68px;height:68px;border-radius:14px;object-fit:cover;
+  margin:0 auto 10px;display:none}
+
+/* COLORS */
+.cg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.cpick{display:flex;align-items:center;gap:9px;background:var(--s2);
+  border:1px solid var(--bd2);border-radius:10px;padding:9px 11px}
+.cpick input[type=color]{width:28px;height:28px;border-radius:6px;
+  padding:2px;cursor:pointer;border:none;flex-shrink:0}
+.clbl{font-size:.65rem;color:var(--sub);font-family:'JetBrains Mono',monospace;text-transform:uppercase}
+.cval{font-size:.78rem;font-family:'JetBrains Mono',monospace;margin-top:2px}
+
+/* TOGGLES */
+.tlist{display:flex;flex-direction:column;gap:7px}
+.tgl{display:flex;align-items:center;justify-content:space-between;
+  background:var(--s2);border:1px solid var(--bd2);border-radius:10px;
+  padding:10px 13px;cursor:pointer;transition:border-color .2s}
+.tgl.on{border-color:rgba(79,142,247,.35)}
+.tgl-l{display:flex;align-items:center;gap:9px}
+.tgl-ico{font-size:1rem}
+.tgl-n{font-size:.84rem;font-weight:600}
+.tgl-d{font-size:.68rem;color:var(--sub);margin-top:1px}
+.sw{width:36px;height:20px;border-radius:10px;background:var(--bd2);
+  position:relative;transition:background .2s;flex-shrink:0}
+.sw::after{content:'';position:absolute;width:14px;height:14px;
+  border-radius:50%;background:#fff;top:3px;left:3px;transition:transform .2s}
+.tgl.on .sw{background:var(--acc)}
+.tgl.on .sw::after{transform:translateX(16px)}
+
+/* PERMISSIONS */
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.pm{display:flex;align-items:center;gap:7px;background:var(--s2);
+  border:1px solid var(--bd2);border-radius:8px;padding:8px 11px;
+  cursor:pointer;font-size:.8rem;transition:all .2s}
+.pm.on{border-color:rgba(79,142,247,.35);background:rgba(79,142,247,.06);color:var(--acc)}
+.pck{width:14px;height:14px;border-radius:3px;border:1px solid var(--bd2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.58rem;flex-shrink:0;transition:all .2s}
+.pm.on .pck{background:var(--acc);border-color:var(--acc);color:#fff}
+
+/* RANGE */
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;
+  background:var(--bd2);border-radius:2px;outline:none;padding:0;border:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;
+  border-radius:50%;background:var(--acc);cursor:pointer}
+.rv{text-align:right;font-size:.72rem;font-family:'JetBrains Mono',monospace;
+  color:var(--acc);margin-top:4px}
+
+/* SUMMARY */
+.sumbox{background:var(--s2);border:1px solid var(--bd2);border-radius:10px;
+  padding:14px;font-family:'JetBrains Mono',monospace;font-size:.75rem;
+  line-height:2;color:var(--sub);margin-bottom:16px}
+.sumbox .k{color:var(--acc)}
+
+/* PROGRESS */
+#bprog{display:none}
+.pbh{display:flex;justify-content:space-between;margin-bottom:9px;font-size:.8rem}
+.pbl{font-family:'JetBrains Mono',monospace;color:var(--sub)}
+.pbp{font-family:'JetBrains Mono',monospace;color:var(--acc);font-weight:600}
+.pbw{background:var(--s2);border-radius:6px;height:6px;overflow:hidden;margin-bottom:10px}
+.pbf{height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2));
+  border-radius:6px;width:0%;transition:width .6s ease;position:relative}
+.pbf::after{content:'';position:absolute;right:0;top:0;bottom:0;width:28px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.25));
+  animation:sh 1.4s infinite}
+@keyframes sh{0%{opacity:0}50%{opacity:1}100%{opacity:0}}
+.log{background:var(--s2);border:1px solid var(--bd);border-radius:10px;
+  padding:11px 13px;font-family:'JetBrains Mono',monospace;font-size:.7rem;
+  max-height:140px;overflow-y:auto;line-height:1.9;scrollbar-width:thin}
+.ll{animation:fu .25s ease}
+@keyframes fu{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+.lok{color:var(--grn)}.li{color:var(--acc)}.lw{color:var(--ylw)}.le{color:var(--red)}
+
+/* RESULT */
+#bres{display:none}
+.rcard{background:linear-gradient(135deg,rgba(79,142,247,.06),rgba(168,85,247,.06));
+  border:1px solid rgba(79,142,247,.25);border-radius:var(--r);
+  padding:22px;display:flex;align-items:flex-start;gap:16px}
+.rico{width:56px;height:56px;background:rgba(79,142,247,.12);border-radius:13px;
+  display:flex;align-items:center;justify-content:center;font-size:1.7rem;flex-shrink:0}
+.rname{font-size:1.05rem;font-weight:700;margin-bottom:3px}
+.rpkg{font-size:.72rem;font-family:'JetBrains Mono',monospace;color:var(--sub);margin-bottom:10px}
+.chips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:13px}
+.chip{background:var(--s2);border:1px solid var(--bd2);border-radius:5px;
+  padding:3px 8px;font-size:.65rem;font-family:'JetBrains Mono',monospace;color:var(--sub)}
+.dbtn{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;border:none;
+  padding:11px 22px;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:.88rem;font-weight:700;cursor:pointer;text-decoration:none;
+  display:inline-flex;align-items:center;gap:7px;transition:all .2s}
+.dbtn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(79,142,247,.35)}
+.gbtn{background:transparent;border:1px solid var(--bd2);color:var(--sub);
+  padding:9px 16px;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:.8rem;font-weight:600;cursor:pointer;transition:all .15s}
+.gbtn:hover{border-color:var(--txt);color:var(--txt)}
+.warn{margin-top:13px;background:rgba(245,158,11,.07);
+  border:1px solid rgba(245,158,11,.2);border-radius:10px;padding:11px 13px;
+  font-size:.72rem;color:rgba(245,200,100,.85);
+  font-family:'JetBrains Mono',monospace;line-height:1.65}
+
+/* ERR */
+#berr{display:none;background:rgba(244,63,94,.06);
+  border:1px solid rgba(244,63,94,.25);border-radius:var(--r);padding:20px}
+#berr h3{color:var(--red);margin-bottom:8px}
+#berr p{font-size:.8rem;color:var(--sub);line-height:1.6}
+
+/* NAV BTNS */
+.snav{display:flex;justify-content:flex-end;gap:9px;margin-top:22px;
+  padding-top:18px;border-top:1px solid var(--bd)}
+.bbk{background:transparent;border:1px solid var(--bd2);color:var(--sub);
+  padding:9px 20px;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:.85rem;font-weight:600;cursor:pointer;transition:all .15s}
+.bbk:hover{border-color:var(--txt);color:var(--txt)}
+.bnx{background:var(--acc);color:#fff;border:none;padding:9px 24px;border-radius:10px;
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:.85rem;font-weight:700;
+  cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:7px}
+.bnx:hover{background:#3b7de8;transform:translateY(-1px)}
+.bbuild{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;border:none;
+  padding:11px 28px;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:.92rem;font-weight:700;cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;gap:9px}
+.bbuild:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(79,142,247,.4)}
+.bbuild:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+/* FEATURES */
+.ft{position:relative;z-index:1;max-width:880px;margin:0 auto;padding:0 18px 80px}
+.ft-title{text-align:center;font-size:1.45rem;font-weight:800;letter-spacing:-.02em;margin-bottom:32px}
+.fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:13px}
+.fc{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);padding:17px;transition:all .2s}
+.fc:hover{border-color:rgba(79,142,247,.3);transform:translateY(-2px)}
+.fc-i{font-size:1.5rem;margin-bottom:8px}
+.fc-n{font-size:.9rem;font-weight:700;margin-bottom:4px}
+.fc-d{font-size:.76rem;color:var(--sub);line-height:1.6}
+
+/* HOW */
+.how{position:relative;z-index:1;max-width:680px;margin:0 auto;padding:0 18px 80px;text-align:center}
+.how-t{font-size:1.45rem;font-weight:800;letter-spacing:-.02em;margin-bottom:32px}
+.how-g{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.hw{padding:0 6px}
+.hw-n{width:36px;height:36px;border-radius:50%;margin:0 auto 9px;
+  background:rgba(79,142,247,.1);border:1px solid rgba(79,142,247,.3);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'JetBrains Mono',monospace;font-weight:600;
+  color:var(--acc);font-size:.85rem}
+.hw-t{font-size:.8rem;font-weight:700;margin-bottom:3px}
+.hw-d{font-size:.7rem;color:var(--sub);line-height:1.5}
+
+footer{position:relative;z-index:1;text-align:center;padding:26px;
+  border-top:1px solid var(--bd);color:var(--sub);
+  font-size:.72rem;font-family:'JetBrains Mono',monospace}
+
+@media(max-width:540px){
+  .g2,.g3,.cg,.pg{grid-template-columns:1fr}
+  .how-g{grid-template-columns:1fr 1fr;gap:16px}
+  .rcard{flex-direction:column}
+  .stats{gap:20px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">App5<b>Web</b></div>
+  <div class="live-pill">LIVE BUILD ENGINE</div>
+</nav>
+
+<section class="hero">
+  <div class="hero-tag">⚡ GitHub Actions + Android SDK Asli</div>
+  <h1>Website Jadi<br><span class="grad">Android APK Asli</span></h1>
+  <p class="sub">Isi form, klik Build — GitHub Actions compile APK sungguhan pakai Android SDK resmi. Download langsung, install di HP.</p>
+  <div class="stats">
+    <div class="stat"><div class="n">100%</div><div class="l">APK Asli</div></div>
+    <div class="stat"><div class="n">~5min</div><div class="l">Build Time</div></div>
+    <div class="stat"><div class="n">Gratis</div><div class="l">Selamanya</div></div>
+    <div class="stat"><div class="n">Android 6+</div><div class="l">Compatible</div></div>
+  </div>
+</section>
+
+<div class="wrap">
+<div class="card">
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab on" id="t1" onclick="go(1)"><span class="tn">1</span><span class="tl">URL & Info</span></button>
+    <button class="tab"    id="t2" onclick="go(2)"><span class="tn">2</span><span class="tl">Branding</span></button>
+    <button class="tab"    id="t3" onclick="go(3)"><span class="tn">3</span><span class="tl">Fitur</span></button>
+    <button class="tab"    id="t4" onclick="go(4)"><span class="tn">4</span><span class="tl">Build</span></button>
+  </div>
+
+  <div class="body">
+
+    <!-- PANEL 1 -->
+    <div class="panel on" id="p1">
+      <div class="info">💡 App5Web membungkus website kamu dalam native Android WebView app. Hasilnya file <b>.apk</b> asli yang bisa langsung diinstall di HP Android.</div>
+      <div class="fg">
+        <div class="fl"><span class="r">*</span> URL Website</div>
+        <div class="url-row">
+          <span class="url-ico">🌐</span>
+          <input type="url" id="aUrl" placeholder="https://websitekamu.com" oninput="autoPkg()">
+          <button class="test-btn" onclick="testUrl()">Test ↗</button>
+        </div>
+        <div class="hint" id="urlHint">Masukkan URL website yang mau diubah jadi APK</div>
+      </div>
+      <div class="fg">
+        <div class="fl"><span class="r">*</span> Nama App</div>
+        <input type="text" id="aName" placeholder="Nama App Kamu" maxlength="30" oninput="autoPkg()">
+      </div>
+      <div class="g2">
+        <div class="fg">
+          <div class="fl">Package ID</div>
+          <input type="text" id="aPkg" value="com.app5web.myapp" placeholder="com.nama.app">
+        </div>
+        <div class="fg">
+          <div class="fl">Versi</div>
+          <input type="text" id="aVer" value="1.0.0" placeholder="1.0.0">
+        </div>
+      </div>
+      <div class="fg">
+        <div class="fl">Orientasi Layar</div>
+        <select id="aOrient">
+          <option value="unspecified">Auto (Portrait & Landscape)</option>
+          <option value="portrait">Portrait Saja</option>
+          <option value="landscape">Landscape Saja</option>
+        </select>
+      </div>
+      <div class="snav">
+        <button class="bnx" onclick="nx(1)">Branding →</button>
+      </div>
+    </div>
+
+    <!-- PANEL 2 -->
+    <div class="panel" id="p2">
+      <div class="sec">Icon App</div>
+      <div class="fg">
+        <div class="drop" onclick="document.getElementById('iFile').click()">
+          <input type="file" id="iFile" accept="image/*" onchange="prevIcon(event)">
+          <img id="iconPrev">
+          <div id="iconPh">
+            <div class="drop-ph">📱</div>
+            <div style="font-weight:700;margin-bottom:5px">Klik untuk upload icon</div>
+            <div class="drop-hint">PNG 512×512 disarankan · Maks 2MB</div>
+          </div>
+        </div>
+      </div>
+      <div class="div"></div>
+      <div class="sec">Warna</div>
+      <div class="fg">
+        <div class="cg">
+          <div class="cpick">
+            <input type="color" id="cP" value="#3b82f6" oninput="syncC('P',this.value)">
+            <div><div class="clbl">Primary</div><div class="cval" id="vP">#3b82f6</div></div>
+          </div>
+          <div class="cpick">
+            <input type="color" id="cA" value="#8b5cf6" oninput="syncC('A',this.value)">
+            <div><div class="clbl">Accent</div><div class="cval" id="vA">#8b5cf6</div></div>
+          </div>
+          <div class="cpick">
+            <input type="color" id="cB" value="#ffffff" oninput="syncC('B',this.value)">
+            <div><div class="clbl">Background</div><div class="cval" id="vB">#ffffff</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="div"></div>
+      <div class="sec">Splash Screen</div>
+      <div class="g2">
+        <div class="fg">
+          <div class="fl">Teks Splash</div>
+          <input type="text" id="sSplash" value="Loading...">
+        </div>
+        <div class="fg">
+          <div class="fl">Durasi</div>
+          <input type="range" id="sDur" min="500" max="5000" step="500" value="2000"
+            oninput="document.getElementById('sDurV').textContent=this.value+'ms'">
+          <div class="rv" id="sDurV">2000ms</div>
+        </div>
+      </div>
+      <div class="snav">
+        <button class="bbk" onclick="bk(2)">← Kembali</button>
+        <button class="bnx" onclick="nx(2)">Fitur →</button>
+      </div>
+    </div>
+
+    <!-- PANEL 3 -->
+    <div class="panel" id="p3">
+      <div class="sec">Fitur WebView</div>
+      <div class="tlist fg" id="tgls">
+        <div class="tgl on" onclick="tog(this)" data-k="js">
+          <div class="tgl-l"><span class="tgl-ico">⚡</span><div><div class="tgl-n">JavaScript</div><div class="tgl-d">Aktifkan JS di WebView</div></div></div>
+          <div class="sw"></div>
+        </div>
+        <div class="tgl on" onclick="tog(this)" data-k="zoom">
+          <div class="tgl-l"><span class="tgl-ico">🔍</span><div><div class="tgl-n">Pinch to Zoom</div><div class="tgl-d">Boleh zoom dengan jari</div></div></div>
+          <div class="sw"></div>
+        </div>
+        <div class="tgl" onclick="tog(this)" data-k="offline">
+          <div class="tgl-l"><span class="tgl-ico">📦</span><div><div class="tgl-n">Offline Cache</div><div class="tgl-d">Simpan halaman untuk offline</div></div></div>
+          <div class="sw"></div>
+        </div>
+        <div class="tgl" onclick="tog(this)" data-k="geo">
+          <div class="tgl-l"><span class="tgl-ico">📍</span><div><div class="tgl-n">Geolokasi</div><div class="tgl-d">Izinkan akses lokasi GPS</div></div></div>
+          <div class="sw"></div>
+        </div>
+        <div class="tgl" onclick="tog(this)" data-k="camera">
+          <div class="tgl-l"><span class="tgl-ico">📷</span><div><div class="tgl-n">Kamera & Upload File</div><div class="tgl-d">Izinkan kamera + file picker</div></div></div>
+          <div class="sw"></div>
+        </div>
+      </div>
+      <div class="div"></div>
+      <div class="sec">Permissions Android</div>
+      <div class="pg fg" id="perms">
+        <div class="pm on" onclick="togPm(this)" data-p="INTERNET"><div class="pck">✓</div>Internet</div>
+        <div class="pm" onclick="togPm(this)" data-p="CAMERA"><div class="pck"></div>Kamera</div>
+        <div class="pm" onclick="togPm(this)" data-p="RECORD_AUDIO"><div class="pck"></div>Mikrofon</div>
+        <div class="pm" onclick="togPm(this)" data-p="ACCESS_FINE_LOCATION"><div class="pck"></div>GPS</div>
+        <div class="pm" onclick="togPm(this)" data-p="READ_MEDIA_IMAGES"><div class="pck"></div>Baca Media</div>
+        <div class="pm" onclick="togPm(this)" data-p="WRITE_EXTERNAL_STORAGE"><div class="pck"></div>Tulis Storage</div>
+        <div class="pm" onclick="togPm(this)" data-p="VIBRATE"><div class="pck"></div>Getar</div>
+        <div class="pm" onclick="togPm(this)" data-p="POST_NOTIFICATIONS"><div class="pck"></div>Notifikasi</div>
+      </div>
+      <div class="div"></div>
+      <div class="sec">Target SDK</div>
+      <div class="g2">
+        <div class="fg">
+          <div class="fl">Min SDK</div>
+          <select id="minSdk">
+            <option value="21">API 21 — Android 5.0</option>
+            <option value="23" selected>API 23 — Android 6.0</option>
+            <option value="26">API 26 — Android 8.0</option>
+            <option value="28">API 28 — Android 9.0</option>
+          </select>
+        </div>
+        <div class="fg">
+          <div class="fl">Target SDK</div>
+          <select id="tgtSdk">
+            <option value="33" selected>API 33 — Android 13</option>
+            <option value="34">API 34 — Android 14</option>
+          </select>
+        </div>
+      </div>
+      <div class="snav">
+        <button class="bbk" onclick="bk(3)">← Kembali</button>
+        <button class="bnx" onclick="nx(3)">Review & Build →</button>
+      </div>
+    </div>
+
+    <!-- PANEL 4 -->
+    <div class="panel" id="p4">
+      <div id="brev">
+        <div class="sec">Ringkasan Build</div>
+        <div class="sumbox" id="sum"></div>
+        <div class="sec">Koneksi ke Backend</div>
+        <div class="info">
+          Sebelum klik Build, pastikan kamu sudah deploy backend ke Vercel dan isi URL-nya di bawah.<br>
+          Lihat <b>README</b> untuk panduan setup lengkap (5 menit).
+        </div>
+        <div class="fg">
+          <div class="fl">URL Vercel Kamu</div>
+          <input type="url" id="apiUrl" placeholder="https://app5web-kamu.vercel.app">
+          <div class="hint">Setelah deploy ke Vercel, paste URL deployment di sini. Disimpan otomatis di browser.</div>
+        </div>
+        <div class="snav">
+          <button class="bbk" onclick="bk(4)">← Kembali</button>
+          <button class="bbuild" id="bBtn" onclick="startBuild()">⚙ Build APK Sekarang</button>
+        </div>
+      </div>
+
+      <!-- PROGRESS -->
+      <div id="bprog">
+        <div class="sec">Sedang Build</div>
+        <div class="pbh">
+          <span class="pbl" id="pLbl">Menghubungkan...</span>
+          <span class="pbp" id="pPct">0%</span>
+        </div>
+        <div class="pbw"><div class="pbf" id="pFill"></div></div>
+        <div class="log" id="bLog"></div>
+        <div style="margin-top:9px;font-size:.68rem;color:var(--sub);font-family:'JetBrains Mono',monospace;text-align:center">
+          ⏱ Build butuh 4–8 menit di GitHub Actions. Halaman ini akan otomatis update.
+        </div>
+      </div>
+
+      <!-- RESULT -->
+      <div id="bres">
+        <div class="rcard">
+          <div class="rico">📦</div>
+          <div style="flex:1">
+            <div class="rname" id="rName">App.apk</div>
+            <div class="rpkg" id="rPkg">Siap diinstall</div>
+            <div class="chips" id="rChips"></div>
+            <div style="display:flex;gap:9px;flex-wrap:wrap;align-items:center">
+              <a id="dlBtn" class="dbtn" href="#" target="_blank">⬇ Download APK</a>
+              <button class="gbtn" onclick="resetAll()">Build Lagi</button>
+            </div>
+          </div>
+        </div>
+        <div class="warn">⚠ <b>Cara install:</b> Di Android buka Settings → Keamanan → Install aplikasi tidak dikenal → Izinkan file manager/browser. Tap file APK → Install.</div>
+      </div>
+
+      <!-- ERROR -->
+      <div id="berr">
+        <h3>❌ Build Gagal</h3>
+        <p id="errMsg">Ada yang salah. Cek log GitHub Actions untuk detail.</p>
+        <div style="margin-top:13px;display:flex;gap:9px;flex-wrap:wrap">
+          <a id="errLink" href="#" target="_blank" class="dbtn" style="font-size:.78rem;padding:8px 16px">Lihat Log ↗</a>
+          <button class="gbtn" onclick="resetBuild()">Coba Lagi</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /body -->
+</div><!-- /card -->
+</div><!-- /wrap -->
+
+<!-- HOW IT WORKS -->
+<section class="how">
+  <div class="how-t">Cara Kerjanya</div>
+  <div class="how-g">
+    <div class="hw"><div class="hw-n">1</div><div class="hw-t">Isi Form</div><div class="hw-d">Masukkan URL, nama, dan kustomisasi app</div></div>
+    <div class="hw"><div class="hw-n">2</div><div class="hw-t">Klik Build</div><div class="hw-d">App5Web trigger GitHub Actions via API</div></div>
+    <div class="hw"><div class="hw-n">3</div><div class="hw-t">GitHub Build</div><div class="hw-d">Android SDK asli compile APK ~5 menit</div></div>
+    <div class="hw"><div class="hw-n">4</div><div class="hw-t">Download</div><div class="hw-d">Dapat .apk asli, install di HP Android</div></div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="ft">
+  <div class="ft-title">Kenapa App5Web?</div>
+  <div class="fg">
+    <div class="fc"><div class="fc-i">📱</div><div class="fc-n">APK Native Asli</div><div class="fc-d">Bukan shortcut — file APK Android sungguhan yang dikompile pakai Android SDK resmi Google.</div></div>
+    <div class="fc"><div class="fc-i">⚙</div><div class="fc-n">GitHub Actions Builder</div><div class="fc-d">Build di runner GitHub gratis — infrastruktur yang sama dipakai developer Android profesional.</div></div>
+    <div class="fc"><div class="fc-i">🎨</div><div class="fc-n">Fully Customizable</div><div class="fc-d">Icon, warna, splash screen, permissions, orientasi — semua bisa diatur tanpa nulis kode.</div></div>
+    <div class="fc"><div class="fc-i">🔒</div><div class="fc-n">Repo Kamu Sendiri</div><div class="fc-d">Build di GitHub repo KAMU. APK tersimpan di GitHub Releases KAMU. Full ownership.</div></div>
+    <div class="fc"><div class="fc-i">🆓</div><div class="fc-n">Gratis Selamanya</div><div class="fc-d">GitHub Actions gratis 2.000 menit/bulan. Tiap build ~5 menit = 400 build APK gratis/bulan.</div></div>
+    <div class="fc"><div class="fc-i">🌐</div><div class="fc-n">Website Apapun</div><div class="fc-d">Works dengan website HTTPS apapun — web app, toko, dashboard, portofolio, game, tools.</div></div>
+  </div>
+</section>
+
+<footer>App5Web © 2025 — Website to Android APK · Dibuat oleh CrossFlare · Open Source & Free</footer>
+
+<script>
+// ── STATE ────────────────────────────────────────────────────
+let cur = 1, pollTmr = null, runId = null, runUrl = null;
+
+// ── NAVIGATION ────────────────────────────────────────────────
+function go(n) {
+  [1,2,3,4].forEach(i => {
+    document.getElementById('p'+i).classList.toggle('on', i===n);
+    const t = document.getElementById('t'+i);
+    t.classList.remove('on');
+    if (i===n) t.classList.add('on');
+  });
+  cur = n;
+  if (n===4) renderSum();
+}
+function nx(f) { if(f===1&&!v1()) return; document.getElementById('t'+f).classList.add('done'); go(f+1); }
+function bk(f) { go(f-1); }
+
+function v1() {
+  const u = document.getElementById('aUrl').value.trim();
+  const n = document.getElementById('aName').value.trim();
+  if (!u || !u.startsWith('http')) { alert('Masukkan URL valid (mulai dengan https://)'); return false; }
+  if (!n) { alert('Masukkan nama app'); return false; }
+  return true;
+}
+
+function autoPkg() {
+  const n = document.getElementById('aName').value.toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,20)||'app';
+  document.getElementById('aPkg').value = `com.app5web.${n}`;
+}
+
+function testUrl() {
+  const u = document.getElementById('aUrl').value.trim();
+  if (!u) return;
+  window.open(u, '_blank');
+  const h = document.getElementById('urlHint');
+  h.style.color = 'var(--grn)';
+  h.textContent = '✓ Dibuka di tab baru — kalau loadnya normal, app juga akan normal';
+}
+
+function prevIcon(e) {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    const img = document.getElementById('iconPrev');
+    img.src = ev.target.result; img.style.display = 'block';
+    document.getElementById('iconPh').style.display = 'none';
+  };
+  r.readAsDataURL(f);
+}
+
+function syncC(id, v) { document.getElementById('v'+id).textContent = v.toUpperCase(); }
+function tog(el) { el.classList.toggle('on'); }
+function togPm(el) {
+  el.classList.toggle('on');
+  el.querySelector('.pck').textContent = el.classList.contains('on') ? '✓' : '';
+}
+
+// ── LOAD SAVED URL ────────────────────────────────────────────
+window.addEventListener('load', () => {
+  const s = localStorage.getItem('a5w_api');
+  if (s) document.getElementById('apiUrl').value = s;
+});
+
+// ── SUMMARY ───────────────────────────────────────────────────
+function renderSum() {
+  const url  = document.getElementById('aUrl').value;
+  const name = document.getElementById('aName').value || 'My App';
+  const pkg  = document.getElementById('aPkg').value;
+  const ver  = document.getElementById('aVer').value;
+  const min  = document.getElementById('minSdk').value;
+  const tgt  = document.getElementById('tgtSdk').value;
+  const col  = document.getElementById('cP').value;
+  const perms= [...document.querySelectorAll('.pm.on')].map(e=>e.dataset.p).join(', ');
+  const ftrs = [...document.querySelectorAll('.tgl.on')].map(e=>e.querySelector('.tgl-n').textContent).join(', ');
+  document.getElementById('sum').innerHTML =
+    `<span class=k>Nama App</span>     ${name}\n`+
+    `<span class=k>URL</span>          ${url}\n`+
+    `<span class=k>Package ID</span>   ${pkg}\n`+
+    `<span class=k>Versi</span>        ${ver}\n`+
+    `<span class=k>SDK Range</span>    API ${min} → ${tgt}\n`+
+    `<span class=k>Warna Primary</span> ${col}\n`+
+    `<span class=k>Fitur</span>        ${ftrs||'–'}\n`+
+    `<span class=k>Permissions</span>  ${perms||'INTERNET'}`;
+}
+
+// ── BUILD ─────────────────────────────────────────────────────
+async function startBuild() {
+  const api = document.getElementById('apiUrl').value.trim().replace(/\/$/,'');
+  if (!api) { alert('Masukkan URL Vercel kamu dulu!'); return; }
+  localStorage.setItem('a5w_api', api);
+
+  const payload = {
+    app_name:        document.getElementById('aName').value,
+    app_url:         document.getElementById('aUrl').value,
+    package_id:      document.getElementById('aPkg').value,
+    app_version:     document.getElementById('aVer').value,
+    version_code:    '1',
+    color_primary:   document.getElementById('cP').value,
+    color_accent:    document.getElementById('cA').value,
+    color_bg:        document.getElementById('cB').value,
+    splash_text:     document.getElementById('sSplash').value,
+    splash_duration: parseInt(document.getElementById('sDur').value),
+    enable_js:       document.querySelector('[data-k=js]').classList.contains('on'),
+    enable_zoom:     document.querySelector('[data-k=zoom]').classList.contains('on'),
+    enable_offline:  document.querySelector('[data-k=offline]').classList.contains('on'),
+    enable_geo:      document.querySelector('[data-k=geo]').classList.contains('on'),
+    enable_camera:   document.querySelector('[data-k=camera]').classList.contains('on'),
+    permissions:     [...document.querySelectorAll('.pm.on')].map(e=>e.dataset.p),
+    min_sdk:         parseInt(document.getElementById('minSdk').value),
+    target_sdk:      parseInt(document.getElementById('tgtSdk').value),
+    orientation:     document.getElementById('aOrient').value,
+  };
+
+  document.getElementById('brev').style.display = 'none';
+  document.getElementById('bprog').style.display = 'block';
+  document.getElementById('bres').style.display  = 'none';
+  document.getElementById('berr').style.display  = 'none';
+
+  log('i', `Menghubungkan ke ${api}...`);
+  prog(5, 'Trigger GitHub Actions...');
+
+  try {
+    const r = await fetch(`${api}/api/build`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+    const d = await r.json();
+    if (!r.ok || d.error) throw new Error(d.error || d.detail || `HTTP ${r.status}`);
+
+    runId  = d.run_id;
+    runUrl = d.run_url || `https://github.com/${d.github_owner}/${d.github_repo}/actions`;
+    log('ok', `✓ Build triggered! Run ID: ${runId}`);
+    prog(10, 'Menunggu runner GitHub...');
+    poll(api, runId);
+
+  } catch(e) {
+    log('e', `✗ ${e.message}`);
+    showErr(e.message, null);
+  }
+}
+
+function poll(api, rid) {
+  let tries = 0;
+  pollTmr = setInterval(async () => {
+    if (++tries > 80) { clearInterval(pollTmr); showErr('Timeout setelah 10 menit.', runUrl); return; }
+    try {
+      const r = await fetch(`${api}/api/status?run_id=${rid}`);
+      const d = await r.json();
+      if (d.error) { log('w', d.error); return; }
+      prog(d.percent, d.label);
+      log(d.status==='completed'?'ok':'i', d.label);
+      if (d.status === 'completed') {
+        clearInterval(pollTmr);
+        if (d.conclusion === 'success') setTimeout(() => showResult(d.download_url), 600);
+        else showErr(`Build gagal: ${d.conclusion}`, d.html_url);
+      }
+    } catch(e) { log('w', `Retry... (${e.message})`); }
+  }, 8000);
+}
+
+function prog(p, lbl) {
+  document.getElementById('pFill').style.width = p+'%';
+  document.getElementById('pPct').textContent  = p+'%';
+  document.getElementById('pLbl').textContent  = lbl;
+}
+
+function log(t, msg) {
+  const el = document.getElementById('bLog');
+  const ts = new Date().toLocaleTimeString('id',{hour12:false});
+  const d  = document.createElement('div');
+  d.className = `ll l${t}`;
+  d.textContent = `[${ts}] ${msg}`;
+  el.appendChild(d); el.scrollTop = el.scrollHeight;
+}
+
+function showResult(dlUrl) {
+  document.getElementById('bprog').style.display = 'none';
+  document.getElementById('bres').style.display  = 'block';
+  const name = document.getElementById('aName').value || 'MyApp';
+  const ver  = document.getElementById('aVer').value  || '1.0.0';
+  const pkg  = document.getElementById('aPkg').value;
+  const min  = document.getElementById('minSdk').value;
+  document.getElementById('rName').textContent = name.replace(/\s+/g,'_')+'_v'+ver+'.apk';
+  document.getElementById('rPkg').textContent  = pkg;
+  document.getElementById('rChips').innerHTML  =
+    `<span class=chip>APK</span><span class=chip>v${ver}</span>`+
+    `<span class=chip>Min API ${min}</span><span class=chip>Debug Signed</span><span class=chip>WebView</span>`;
+  const btn = document.getElementById('dlBtn');
+  btn.href = dlUrl || runUrl || '#';
+  btn.textContent = dlUrl && dlUrl.endsWith('.apk') ? '⬇ Download APK' : '↗ Buka GitHub Release';
+}
+
+function showErr(msg, url) {
+  document.getElementById('bprog').style.display = 'none';
+  document.getElementById('berr').style.display  = 'block';
+  document.getElementById('errMsg').textContent  = msg;
+  const l = document.getElementById('errLink');
+  if (url) { l.href = url; l.style.display=''; } else l.style.display='none';
+}
+
+function resetBuild() {
+  if (pollTmr) clearInterval(pollTmr);
+  document.getElementById('bprog').style.display = 'none';
+  document.getElementById('bres').style.display  = 'none';
+  document.getElementById('berr').style.display  = 'none';
+  document.getElementById('brev').style.display  = 'block';
+}
+
+function resetAll() {
+  resetBuild(); go(1);
+  [1,2,3].forEach(i => { const t = document.getElementById('t'+i); t.classList.remove('done','on'); });
+  document.getElementById('t1').classList.add('on');
+}
+</script>
+</body>
+</html>
